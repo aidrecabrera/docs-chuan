@@ -200,9 +200,6 @@ The admin can only see this. Once they navigate through the staff section, they 
 # PostgreSQL Schema
 
 ```postgres
--- Supabase AI is experimental and may produce incorrect answers
--- Always verify the output before executing
-
 create table
   location (
     location_id bigint primary key generated always as identity,

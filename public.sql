@@ -1,6 +1,3 @@
--- Supabase AI is experimental and may produce incorrect answers
--- Always verify the output before executing
-
 create table
   location (
     location_id bigint primary key generated always as identity,
