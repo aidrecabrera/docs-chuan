@@ -175,104 +175,94 @@ staff ||--o{ transaction : ""
 ```
 ## PostgreSQL Schema
 ```sql
--- Table to store information about customers
-CREATE TABLE Customers (
-    CustomerID SERIAL PRIMARY KEY, -- Unique identifier for each customer
-    FirstName VARCHAR(50) NOT NULL, -- First name of the customer
-    LastName VARCHAR(50) NOT NULL, -- Last name of the customer
-    PhoneNumber VARCHAR(20), -- Phone number of the customer
-    Note TEXT, -- Additional notes about the customer
-    Location VARCHAR(100) -- Location of the customer
+CREATE TABLE customers (
+    customer_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    phone_number VARCHAR(20),
+    note TEXT,
+    location VARCHAR(100)
 );
 
--- Table to store information about transactions made by customers
-CREATE TABLE Transactions (
-    TransactionID SERIAL PRIMARY KEY, -- Unique identifier for each transaction
-    CustomerID INT REFERENCES Customers(CustomerID), -- Foreign key referencing the customer associated with this transaction
-    Notes TEXT, -- Additional notes about the transaction
-    Discount DECIMAL(10, 2), -- Discount applied to the transaction
-    Total DECIMAL(10, 2), -- Total amount of the transaction
-    Status VARCHAR(10) CHECK (Status IN ('Paid', 'Due')) -- Status of the transaction (Paid or Due)
+CREATE TABLE transactions (
+    transaction_id SERIAL PRIMARY KEY,
+    customer_id INT REFERENCES customers(customer_id),
+    notes TEXT,
+    discount DECIMAL(10, 2),
+    total DECIMAL(10, 2),
+    status VARCHAR(10) CHECK (status IN ('Paid', 'Due'))
 );
 
--- Table to store items purchased in each transaction
-CREATE TABLE TransactionItems (
-    TransactionItemID SERIAL PRIMARY KEY, -- Unique identifier for each transaction item
-    TransactionID INT REFERENCES Transactions(TransactionID), -- Foreign key referencing the transaction associated with this item
-    ProductID INT REFERENCES Products(ProductID), -- Foreign key referencing the product purchased
-    Quantity INT -- Quantity of the product purchased
+CREATE TABLE transaction_items (
+    transaction_item_id SERIAL PRIMARY KEY,
+    transaction_id INT REFERENCES transactions(transaction_id),
+    product_id INT REFERENCES products(product_id),
+    quantity INT
 );
 
--- Table to store services added to each transaction
-CREATE TABLE TransactionServices (
-    TransactionServiceID SERIAL PRIMARY KEY, -- Unique identifier for each transaction service
-    TransactionID INT REFERENCES Transactions(TransactionID), -- Foreign key referencing the transaction associated with this service
-    ServiceID INT REFERENCES Services(ServiceID), -- Foreign key referencing the service added to the transaction
-    Quantity INT, -- Quantity of the service added
-    Total DECIMAL(10, 2) -- Total amount of the service
+CREATE TABLE transaction_services (
+    transaction_service_id SERIAL PRIMARY KEY,
+    transaction_id INT REFERENCES transactions(transaction_id),
+    service_id INT REFERENCES services(service_id),
+    quantity INT,
+    total DECIMAL(10, 2)
 );
 
--- Table to store custom products added to transactions
-CREATE TABLE CustomProducts (
-    CustomProductID SERIAL PRIMARY KEY, -- Unique identifier for each custom product
-    TransactionID INT REFERENCES Transactions(TransactionID), -- Foreign key referencing the transaction associated with this custom product
-    CustomName VARCHAR(100), -- Name of the custom product
-    Price DECIMAL(10, 2), -- Price of the custom product
-    Quantity INT, -- Quantity of the custom product
-    Total DECIMAL(10, 2) -- Total amount of the custom product
+CREATE TABLE custom_products (
+    custom_product_id SERIAL PRIMARY KEY,
+    transaction_id INT REFERENCES transactions(transaction_id),
+    custom_name VARCHAR(100),
+    price DECIMAL(10, 2),
+    quantity INT,
+    total DECIMAL(10, 2)
 );
 
--- Table to store information about services offered
-CREATE TABLE Services (
-    ServiceID SERIAL PRIMARY KEY, -- Unique identifier for each service
-    Title VARCHAR(100), -- Title of the service
-    Description TEXT, -- Description of the service
-    Category VARCHAR(50), -- Category of the service
-    Type VARCHAR(50), -- Type of the service
-    Availability BOOLEAN, -- Availability of the service
-    Price DECIMAL(10, 2), -- Price of the service
-    CostPerService DECIMAL(10, 2), -- Cost per service
-    Profit DECIMAL(10, 2), -- Profit from the service
-    Margin DECIMAL(5, 2) -- Margin of the service
+CREATE TABLE services (
+    service_id SERIAL PRIMARY KEY,
+    title VARCHAR(100),
+    description TEXT,
+    category VARCHAR(50),
+    type VARCHAR(50),
+    availability BOOLEAN,
+    price DECIMAL(10, 2),
+    cost_per_service DECIMAL(10, 2),
+    profit DECIMAL(10, 2),
+    margin DECIMAL(5, 2)
 );
 
--- Table to store information about products offered
-CREATE TABLE Products (
-    ProductID SERIAL PRIMARY KEY, -- Unique identifier for each product
-    Title VARCHAR(100), -- Title of the product
-    Description TEXT, -- Description of the product
-    Availability BOOLEAN, -- Availability of the product
-    Price DECIMAL(10, 2), -- Price of the product
-    CostPerProduct DECIMAL(10, 2), -- Cost per product
-    Profit DECIMAL(10, 2), -- Profit from the product
-    Margin DECIMAL(5, 2) -- Margin of the product
+CREATE TABLE products (
+    product_id SERIAL PRIMARY KEY,
+    title VARCHAR(100),
+    description TEXT,
+    availability BOOLEAN,
+    price DECIMAL(10, 2),
+    cost_per_product DECIMAL(10, 2),
+    profit DECIMAL(10, 2),
+    margin DECIMAL(5, 2)
 );
 
--- Table to store information about different locations
-CREATE TABLE Locations (
-    LocationID SERIAL PRIMARY KEY, -- Unique identifier for each location
-    LocationName VARCHAR(100) -- Name of the location
+CREATE TABLE locations (
+    location_id SERIAL PRIMARY KEY,
+    location_name VARCHAR(100)
 );
 
--- Table to store inventory of products at different locations
-CREATE TABLE Inventory (
-    InventoryID SERIAL PRIMARY KEY, -- Unique identifier for each inventory entry
-    ProductID INT REFERENCES Products(ProductID), -- Foreign key referencing the product in inventory
-    LocationID INT REFERENCES Locations(LocationID), -- Foreign key referencing the location of the inventory
-    Quantity INT, -- Quantity of the product in inventory
-    CONSTRAINT unique_product_location UNIQUE (ProductID, LocationID) -- Constraint to ensure uniqueness of product and location combination
+CREATE TABLE inventory (
+    inventory_id SERIAL PRIMARY KEY,
+    product_id INT REFERENCES products(product_id),
+    location_id INT REFERENCES locations(location_id),
+    quantity INT,
+    CONSTRAINT unique_product_location UNIQUE (product_id, location_id)
 );
 
--- Table to store information about staff members
-CREATE TABLE Staff (
-    StaffID SERIAL PRIMARY KEY, -- Unique identifier for each staff member
-    FirstName VARCHAR(50) NOT NULL, -- First name of the staff member
-    LastName VARCHAR(50) NOT NULL, -- Last name of the staff member
-    Username VARCHAR(50) UNIQUE, -- Unique username for the staff member
-    Email VARCHAR(100) UNIQUE, -- Unique email address of the staff member
-    Phone VARCHAR(20), -- Phone number of the staff member
-    StaffPermissions BOOLEAN, -- Permissions granted to the staff member
-    AdminPermissions BOOLEAN -- Admin permissions granted to the staff member
+CREATE TABLE staff (
+    staff_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    username VARCHAR(50) UNIQUE,
+    email VARCHAR(100) UNIQUE,
+    phone VARCHAR(20),
+    staff_permissions BOOLEAN,
+    admin_permissions BOOLEAN
 );
 ```
 ---
