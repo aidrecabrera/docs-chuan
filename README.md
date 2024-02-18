@@ -9,17 +9,17 @@
 </h1>
 
 
-<p align="center">
-  <a src="https://www.facebook.com/chuanspaDigosCity/" alt="https://www.facebook.com/chuanspaDigosCity/">
+<div align="center">
+<a href="https://www.facebook.com/chuanspaDigosCity/">
     <img alt="Static Badge" src="https://img.shields.io/badge/client-0048fa?style=for-the-badge&logo=facebook&link=https%3A%2F%2Fwww.facebook.com%2FchuanspaDigosCity">
-  </a>
-  <a src="https://www.facebook.com/chuanspaDigosCity/" alt="https://www.facebook.com/chuanspaDigosCity/">
+</a>
+<a href="https://www.facebook.com/chuanspaDigosCity/">
     <img alt="Static Badge" src="https://img.shields.io/badge/author-0048fa?style=for-the-badge&logo=github&link=https%3A%2F%2Faidrecabrera-portfolio.vercel.app%2F">
-  </a>
-  <a src="https://github.com/aidrecabrera/docs-chuan/" alt="https://github.com/aidrecabrera/docs-chuan/">
+</a>
+<a href="https://github.com/aidrecabrera/docs-chuan/">
     <img alt="Static Badge" src="https://img.shields.io/badge/docs-0048fa?style=for-the-badge&logo=github&link=https%3A%2F%2Fgithub.com/docs-chuan%2F">
-  </a>
-</p>
+</a>
+</div>
 
 # Problem
 ### Background
