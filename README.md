@@ -9,11 +9,17 @@
 </h1>
 
 
-<p align="center">
-<img alt="Static Badge" src="https://img.shields.io/badge/client-0048fa?style=for-the-badge&logo=facebook&link=https%3A%2F%2Fwww.facebook.com%2FchuanspaDigosCity">
-<img alt="Static Badge" src="https://img.shields.io/badge/author-0048fa?style=for-the-badge&logo=github&link=https%3A%2F%2Faidrecabrera-portfolio.vercel.app%2F">
-<img alt="Static Badge" src="https://img.shields.io/badge/docs-0048fa?style=for-the-badge&logo=github&link=https%3A%2F%2Faidrecabrera-portfolio.vercel.app%2F">
-</p>
+<div align="center">
+<a href="https://www.facebook.com/chuanspaDigosCity/">
+    <img alt="Static Badge" src="https://img.shields.io/badge/client-0048fa?style=for-the-badge&logo=facebook&link=https%3A%2F%2Fwww.facebook.com%2FchuanspaDigosCity">
+</a>
+<a href="https://aidrecabrera-portfolio.vercel.app">
+    <img alt="Static Badge" src="https://img.shields.io/badge/author-0048fa?style=for-the-badge&logo=github&link=https%3A%2F%2Faidrecabrera-portfolio.vercel.app%2F">
+</a>
+<a href="https://github.com/aidrecabrera/docs-chuan/">
+    <img alt="Static Badge" src="https://img.shields.io/badge/docs-0048fa?style=for-the-badge&logo=github&link=https%3A%2F%2Fgithub.com/docs-chuan%2F">
+</a>
+</div>
 
 # Problem
 ### Background
@@ -54,6 +60,9 @@ The solution involves developing a comprehensive cloud-based POS system tailored
 # User Flows & Mocks
 
 The system design depicted in the provided images appears to be inspired by Shopify POS (Point of Sale). Shopify POS is a system designed to facilitate retail transactions, inventory management, and customer engagement in physical retail environments. It provides a comprehensive platform for businesses to manage sales, accept payments, track inventory, and analyze customer data.
+
+---
+![sys-chuan: Login UI](https://github.com/aidrecabrera/docs-chuan/assets/61798731/803291c8-fa0b-4cd3-9c7a-af8583b6bc32)
 ---
 ![Admin Sitemap](./img/admin_sitemap.svg)
 ---
