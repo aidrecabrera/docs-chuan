@@ -286,105 +286,113 @@ The system design depicted in the provided images appears to be inspired by Shop
 ## PostgreSQL Schema
 
 ```postgres
--- Table to store information about customers
-CREATE TABLE Customers (
-    CustomerID SERIAL PRIMARY KEY, -- Unique identifier for each customer
-    FirstName VARCHAR(50) NOT NULL, -- First name of the customer
-    LastName VARCHAR(50) NOT NULL, -- Last name of the customer
-    PhoneNumber VARCHAR(20), -- Phone number of the customer
-    Note TEXT, -- Additional notes about the customer
-    Location VARCHAR(100) -- Location of the customer
-);
+create table
+  location (
+    location_id bigint primary key generated always as identity,
+    location_name text
+  );
 
--- Table to store information about transactions made by customers
-CREATE TABLE Transactions (
-    TransactionID SERIAL PRIMARY KEY, -- Unique identifier for each transaction
-    CustomerID INT REFERENCES Customers(CustomerID), -- Foreign key referencing the customer associated with this transaction
-    Notes TEXT, -- Additional notes about the transaction
-    Discount DECIMAL(10, 2), -- Discount applied to the transaction
-    Total DECIMAL(10, 2), -- Total amount of the transaction
-    Status VARCHAR(10) CHECK (Status IN ('Paid', 'Due')) -- Status of the transaction (Paid or Due)
-);
+create table
+  product (
+    product_id bigint primary key generated always as identity,
+    title text,
+    description text,
+    availability boolean,
+    price numeric not null,
+    cost_per_product numeric not null,
+    profit numeric not null,
+    margin numeric not null
+  );
 
--- Table to store items purchased in each transaction
-CREATE TABLE TransactionItems (
-    TransactionItemID SERIAL PRIMARY KEY, -- Unique identifier for each transaction item
-    TransactionID INT REFERENCES Transactions(TransactionID), -- Foreign key referencing the transaction associated with this item
-    ProductID INT REFERENCES Products(ProductID), -- Foreign key referencing the product purchased
-    Quantity INT -- Quantity of the product purchased
-);
+create table
+  inventory (
+    inventory_id bigint primary key generated always as identity,
+    product_id bigint,
+    location_id bigint,
+    quantity int,
+    constraint unique_product_location unique (product_id, location_id),
+    foreign key (product_id) references product (product_id),
+    foreign key (location_id) references location (location_id)
+  );
 
--- Table to store services added to each transaction
-CREATE TABLE TransactionServices (
-    TransactionServiceID SERIAL PRIMARY KEY, -- Unique identifier for each transaction service
-    TransactionID INT REFERENCES Transactions(TransactionID), -- Foreign key referencing the transaction associated with this service
-    ServiceID INT REFERENCES Services(ServiceID), -- Foreign key referencing the service added to the transaction
-    Quantity INT, -- Quantity of the service added
-    Total DECIMAL(10, 2) -- Total amount of the service
-);
+create table
+  service (
+    service_id bigint primary key generated always as identity,
+    title text,
+    description text,
+    category text,
+    type text,
+    availability boolean,
+    price numeric not null,
+    cost_per_service numeric not null,
+    profit numeric not null,
+    margin numeric not null
+  );
 
--- Table to store custom products added to transactions
-CREATE TABLE CustomProducts (
-    CustomProductID SERIAL PRIMARY KEY, -- Unique identifier for each custom product
-    TransactionID INT REFERENCES Transactions(TransactionID), -- Foreign key referencing the transaction associated with this custom product
-    CustomName VARCHAR(100), -- Name of the custom product
-    Price DECIMAL(10, 2), -- Price of the custom product
-    Quantity INT, -- Quantity of the custom product
-    Total DECIMAL(10, 2) -- Total amount of the custom product
-);
+create table
+  customer (
+    customer_id bigint primary key generated always as identity,
+    first_name text not null,
+    last_name text not null,
+    phone_number text,
+    note text,
+    location text
+  );
 
--- Table to store information about services offered
-CREATE TABLE Services (
-    ServiceID SERIAL PRIMARY KEY, -- Unique identifier for each service
-    Title VARCHAR(100), -- Title of the service
-    Description TEXT, -- Description of the service
-    Category VARCHAR(50), -- Category of the service
-    Type VARCHAR(50), -- Type of the service
-    Availability BOOLEAN, -- Availability of the service
-    Price DECIMAL(10, 2), -- Price of the service
-    CostPerService DECIMAL(10, 2), -- Cost per service
-    Profit DECIMAL(10, 2), -- Profit from the service
-    Margin DECIMAL(5, 2) -- Margin of the service
-);
+create table
+  staff (
+    staff_id bigint primary key generated always as identity,
+    first_name text not null,
+    last_name text not null,
+    username text unique,
+    email text unique,
+    phone text,
+    staff_permissions boolean,
+    admin_permissions boolean
+  );
 
--- Table to store information about products offered
-CREATE TABLE Products (
-    ProductID SERIAL PRIMARY KEY, -- Unique identifier for each product
-    Title VARCHAR(100), -- Title of the product
-    Description TEXT, -- Description of the product
-    Availability BOOLEAN, -- Availability of the product
-    Price DECIMAL(10, 2), -- Price of the product
-    CostPerProduct DECIMAL(10, 2), -- Cost per product
-    Profit DECIMAL(10, 2), -- Profit from the product
-    Margin DECIMAL(5, 2) -- Margin of the product
-);
+create table
+  transaction (
+    transaction_id bigint primary key generated always as identity,
+    customer_id bigint,
+    notes text,
+    discount numeric not null,
+    total numeric not null,
+    status text check (status in ('Paid', 'Due')),
+    foreign key (customer_id) references customer (customer_id)
+  );
 
--- Table to store information about different locations
-CREATE TABLE Locations (
-    LocationID SERIAL PRIMARY KEY, -- Unique identifier for each location
-    LocationName VARCHAR(100) -- Name of the location
-);
+create table
+  transaction_item (
+    transaction_item_id bigint primary key generated always as identity,
+    transaction_id bigint,
+    product_id bigint,
+    quantity int,
+    foreign key (transaction_id) references transaction (transaction_id),
+    foreign key (product_id) references product (product_id)
+  );
 
--- Table to store inventory of products at different locations
-CREATE TABLE Inventory (
-    InventoryID SERIAL PRIMARY KEY, -- Unique identifier for each inventory entry
-    ProductID INT REFERENCES Products(ProductID), -- Foreign key referencing the product in inventory
-    LocationID INT REFERENCES Locations(LocationID), -- Foreign key referencing the location of the inventory
-    Quantity INT, -- Quantity of the product in inventory
-    CONSTRAINT unique_product_location UNIQUE (ProductID, LocationID) -- Constraint to ensure uniqueness of product and location combination
-);
+create table
+  transaction_service (
+    transaction_service_id bigint primary key generated always as identity,
+    transaction_id bigint,
+    service_id bigint,
+    quantity int,
+    total numeric not null,
+    foreign key (transaction_id) references transaction (transaction_id),
+    foreign key (service_id) references service (service_id)
+  );
 
--- Table to store information about staff members
-CREATE TABLE Staff (
-    StaffID SERIAL PRIMARY KEY, -- Unique identifier for each staff member
-    FirstName VARCHAR(50) NOT NULL, -- First name of the staff member
-    LastName VARCHAR(50) NOT NULL, -- Last name of the staff member
-    Username VARCHAR(50) UNIQUE, -- Unique username for the staff member
-    Email VARCHAR(100) UNIQUE, -- Unique email address of the staff member
-    Phone VARCHAR(20), -- Phone number of the staff member
-    StaffPermissions BOOLEAN, -- Permissions granted to the staff member
-    AdminPermissions BOOLEAN -- Admin permissions granted to the staff member
-);
+create table
+  custom_product (
+    custom_product_id bigint primary key generated always as identity,
+    transaction_id bigint,
+    custom_name text,
+    price numeric not null,
+    quantity int,
+    total numeric not null,
+    foreign key (transaction_id) references transaction (transaction_id)
+  );
 ```
 
 ---
