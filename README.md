@@ -13,7 +13,7 @@
 <a href="https://www.facebook.com/chuanspaDigosCity/">
     <img alt="Static Badge" src="https://img.shields.io/badge/client-0048fa?style=for-the-badge&logo=facebook&link=https%3A%2F%2Fwww.facebook.com%2FchuanspaDigosCity">
 </a>
-<a href="https://www.facebook.com/chuanspaDigosCity/">
+<a href="https://aidrecabrera-portfolio.vercel.app">
     <img alt="Static Badge" src="https://img.shields.io/badge/author-0048fa?style=for-the-badge&logo=github&link=https%3A%2F%2Faidrecabrera-portfolio.vercel.app%2F">
 </a>
 <a href="https://github.com/aidrecabrera/docs-chuan/">
