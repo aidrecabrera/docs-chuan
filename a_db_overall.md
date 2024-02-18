@@ -200,103 +200,114 @@ The admin can only see this. Once they navigate through the staff section, they 
 # PostgreSQL Schema
 
 ```postgres
--- Table to store information about different locations
-CREATE TABLE test_environment.location (
-    location_id SERIAL PRIMARY KEY, -- Unique identifier for each location
-    location_name VARCHAR(100) -- Name of the location
-);
+-- Supabase AI is experimental and may produce incorrect answers
+-- Always verify the output before executing
 
--- Table to store information about products offered
-CREATE TABLE test_environment.product (
-    product_id SERIAL PRIMARY KEY, -- Unique identifier for each product
-    title VARCHAR(100), -- Title of the product
-    description TEXT, -- Description of the product
-    availability BOOLEAN, -- Availability of the product
-    price DECIMAL(10, 2), -- Price of the product
-    cost_per_product DECIMAL(10, 2), -- Cost per product
-    profit DECIMAL(10, 2), -- Profit from the product
-    margin DECIMAL(5, 2) -- Margin of the product
-);
+create table
+  location (
+    location_id bigint primary key generated always as identity,
+    location_name text
+  );
 
--- Table to store inventory of products at different locations
-CREATE TABLE test_environment.inventory (
-    inventory_id SERIAL PRIMARY KEY, -- Unique identifier for each inventory entry
-    product_id INT REFERENCES test_environment.product(product_id), -- Foreign key referencing the product in inventory
-    location_id INT REFERENCES test_environment.location(location_id), -- Foreign key referencing the location of the inventory
-    quantity INT, -- Quantity of the product in inventory
-    CONSTRAINT unique_product_location UNIQUE (product_id, location_id) -- Constraint to ensure uniqueness of product and location combination
-);
+create table
+  product (
+    product_id bigint primary key generated always as identity,
+    title text,
+    description text,
+    availability boolean,
+    price numeric not null,
+    cost_per_product numeric not null,
+    profit numeric not null,
+    margin numeric not null
+  );
 
--- Table to store information about services offered
-CREATE TABLE test_environment.service (
-    service_id SERIAL PRIMARY KEY, -- Unique identifier for each service
-    title VARCHAR(100), -- Title of the service
-    description TEXT, -- Description of the service
-    category VARCHAR(50), -- Category of the service
-    type VARCHAR(50), -- Type of the service
-    availability BOOLEAN, -- Availability of the service
-    price DECIMAL(10, 2), -- Price of the service
-    cost_per_service DECIMAL(10, 2), -- Cost per service
-    profit DECIMAL(10, 2), -- Profit from the service
-    margin DECIMAL(5, 2) -- Margin of the service
-);
+create table
+  inventory (
+    inventory_id bigint primary key generated always as identity,
+    product_id bigint,
+    location_id bigint,
+    quantity int,
+    constraint unique_product_location unique (product_id, location_id),
+    foreign key (product_id) references product (product_id),
+    foreign key (location_id) references location (location_id)
+  );
 
--- Table to store information about customers
-CREATE TABLE test_environment.customer (
-    customer_id SERIAL PRIMARY KEY, -- Unique identifier for each customer
-    first_name VARCHAR(50) NOT NULL, -- First name of the customer
-    last_name VARCHAR(50) NOT NULL, -- Last name of the customer
-    phone_number VARCHAR(20), -- Phone number of the customer
-    note TEXT, -- Additional notes about the customer
-    location VARCHAR(100) -- Location of the customer
-);
+create table
+  service (
+    service_id bigint primary key generated always as identity,
+    title text,
+    description text,
+    category text,
+    type text,
+    availability boolean,
+    price numeric not null,
+    cost_per_service numeric not null,
+    profit numeric not null,
+    margin numeric not null
+  );
 
--- Table to store information about staff members
-CREATE TABLE test_environment.staff (
-    staff_id SERIAL PRIMARY KEY, -- Unique identifier for each staff member
-    first_name VARCHAR(50) NOT NULL, -- First name of the staff member
-    last_name VARCHAR(50) NOT NULL, -- Last name of the staff member
-    username VARCHAR(50) UNIQUE, -- Unique username for the staff member
-    email VARCHAR(100) UNIQUE, -- Unique email address of the staff member
-    phone VARCHAR(20), -- Phone number of the staff member
-    staff_permissions BOOLEAN, -- Permissions granted to the staff member
-    admin_permissions BOOLEAN -- Admin permissions granted to the staff member
-);
+create table
+  customer (
+    customer_id bigint primary key generated always as identity,
+    first_name text not null,
+    last_name text not null,
+    phone_number text,
+    note text,
+    location text
+  );
 
--- Table to store information about transactions made by customers
-CREATE TABLE test_environment.transaction (
-    transaction_id SERIAL PRIMARY KEY, -- Unique identifier for each transaction
-    customer_id INT REFERENCES test_environment.customer(customer_id), -- Foreign key referencing the customer associated with this transaction
-    notes TEXT, -- Additional notes about the transaction
-    discount DECIMAL(10, 2), -- Discount applied to the transaction
-    total DECIMAL(10, 2), -- Total amount of the transaction
-    status VARCHAR(10) CHECK (status IN ('Paid', 'Due')) -- Status of the transaction (Paid or Due)
-);
+create table
+  staff (
+    staff_id bigint primary key generated always as identity,
+    first_name text not null,
+    last_name text not null,
+    username text unique,
+    email text unique,
+    phone text,
+    staff_permissions boolean,
+    admin_permissions boolean
+  );
 
--- Table to store items purchased in each transaction
-CREATE TABLE test_environment.transaction_item (
-    transaction_item_id SERIAL PRIMARY KEY, -- Unique identifier for each transaction item
-    transaction_id INT REFERENCES test_environment.transaction(transaction_id), -- Foreign key referencing the transaction associated with this item
-    product_id INT REFERENCES test_environment.product(product_id), -- Foreign key referencing the product purchased
-    quantity INT -- Quantity of the product purchased
-);
+create table
+  transaction (
+    transaction_id bigint primary key generated always as identity,
+    customer_id bigint,
+    notes text,
+    discount numeric not null,
+    total numeric not null,
+    status text check (status in ('Paid', 'Due')),
+    foreign key (customer_id) references customer (customer_id)
+  );
 
--- Table to store services added to each transaction
-CREATE TABLE test_environment.transaction_service (
-    transaction_service_id SERIAL PRIMARY KEY, -- Unique identifier for each transaction service
-    transaction_id INT REFERENCES test_environment.transaction(transaction_id), -- Foreign key referencing the transaction associated with this service
-    service_id INT REFERENCES test_environment.service(service_id), -- Foreign key referencing the service added to the transaction
-    quantity INT, -- Quantity of the service added
-    total DECIMAL(10, 2) -- Total amount of the service
-);
+create table
+  transaction_item (
+    transaction_item_id bigint primary key generated always as identity,
+    transaction_id bigint,
+    product_id bigint,
+    quantity int,
+    foreign key (transaction_id) references transaction (transaction_id),
+    foreign key (product_id) references product (product_id)
+  );
 
--- Table to store custom products added to transactions
-CREATE TABLE test_environment.custom_product (
-    custom_product_id SERIAL PRIMARY KEY, -- Unique identifier for each custom product
-    transaction_id INT REFERENCES test_environment.transaction(transaction_id), -- Foreign key referencing the transaction associated with this custom product
-    custom_name VARCHAR(100), -- Name of the custom product
-    price DECIMAL(10, 2), -- Price of the custom product
-    quantity INT, -- Quantity of the custom product
-    total DECIMAL(10, 2) -- Total amount of the custom product
-);
+create table
+  transaction_service (
+    transaction_service_id bigint primary key generated always as identity,
+    transaction_id bigint,
+    service_id bigint,
+    quantity int,
+    total numeric not null,
+    foreign key (transaction_id) references transaction (transaction_id),
+    foreign key (service_id) references service (service_id)
+  );
+
+create table
+  custom_product (
+    custom_product_id bigint primary key generated always as identity,
+    transaction_id bigint,
+    custom_name text,
+    price numeric not null,
+    quantity int,
+    total numeric not null,
+    foreign key (transaction_id) references transaction (transaction_id)
+  );
 ```
