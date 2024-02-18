@@ -54,6 +54,7 @@ The solution involves developing a comprehensive cloud-based POS system tailored
 # User Flows & Mocks
 
 The system design depicted in the provided images appears to be inspired by Shopify POS (Point of Sale). Shopify POS is a system designed to facilitate retail transactions, inventory management, and customer engagement in physical retail environments. It provides a comprehensive platform for businesses to manage sales, accept payments, track inventory, and analyze customer data.
+
 ---
 ![Admin Sitemap](./img/admin_sitemap.svg)
 ---
