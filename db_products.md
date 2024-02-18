@@ -1,4 +1,19 @@
 ## Service
+
+To accommodate the information for services and their pricing, we can create a separate table for services and adjust the pricing schema accordingly.
+
+- Services Table: This table stores information about each service.
+- ServiceID: A unique identifier for each service.
+- Title: The title of the service.
+- Description: A description of the service.
+- Category: The category of the service.
+- Type: The type of the service.
+- Availability: A boolean value indicating whether the service is available or not.
+- Price: The selling price of the service.
+- CostPerService: The cost incurred for providing the service.
+- Profit: The profit margin for the service.
+- Margin: The profit margin percentage.
+
 When adding a service, the staff must put the following information:
 
 ### Service Information
@@ -15,6 +30,20 @@ When adding a service, the staff must put the following information:
 - Margin
 
 ## Item
+
+This table stores information about each product along with pricing and inventory details.
+
+- ProductID: A unique identifier for each product.
+- Title: The title of the product.
+- Description: A description of the product.
+- Availability: A boolean value indicating whether the product is available or not.
+- Price: The selling price of the product.
+- CostPerProduct: The cost incurred for each unit of the product.
+- Profit: The profit margin for the product.
+- Margin: The profit margin percentage.
+- LocationID: A foreign key referencing the location where the product is stored.
+- Quantity: The quantity of the product available at the specified location.
+
 When adding an item, the staff must put the following information:
 
 ### Item Information
