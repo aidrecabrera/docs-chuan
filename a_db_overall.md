@@ -200,14 +200,31 @@ The admin can only see this. Once they navigate through the staff section, they 
 # PostgreSQL Schema
 
 ```postgres
--- Table to store information about customers
-CREATE TABLE test_environment.customer (
-    customer_id SERIAL PRIMARY KEY, -- Unique identifier for each customer
-    first_name VARCHAR(50) NOT NULL, -- First name of the customer
-    last_name VARCHAR(50) NOT NULL, -- Last name of the customer
-    phone_number VARCHAR(20), -- Phone number of the customer
-    note TEXT, -- Additional notes about the customer
-    location VARCHAR(100) -- Location of the customer
+-- Table to store information about different locations
+CREATE TABLE test_environment.location (
+    location_id SERIAL PRIMARY KEY, -- Unique identifier for each location
+    location_name VARCHAR(100) -- Name of the location
+);
+
+-- Table to store information about products offered
+CREATE TABLE test_environment.product (
+    product_id SERIAL PRIMARY KEY, -- Unique identifier for each product
+    title VARCHAR(100), -- Title of the product
+    description TEXT, -- Description of the product
+    availability BOOLEAN, -- Availability of the product
+    price DECIMAL(10, 2), -- Price of the product
+    cost_per_product DECIMAL(10, 2), -- Cost per product
+    profit DECIMAL(10, 2), -- Profit from the product
+    margin DECIMAL(5, 2) -- Margin of the product
+);
+
+-- Table to store inventory of products at different locations
+CREATE TABLE test_environment.inventory (
+    inventory_id SERIAL PRIMARY KEY, -- Unique identifier for each inventory entry
+    product_id INT REFERENCES test_environment.product(product_id), -- Foreign key referencing the product in inventory
+    location_id INT REFERENCES test_environment.location(location_id), -- Foreign key referencing the location of the inventory
+    quantity INT, -- Quantity of the product in inventory
+    CONSTRAINT unique_product_location UNIQUE (product_id, location_id) -- Constraint to ensure uniqueness of product and location combination
 );
 
 -- Table to store information about services offered
@@ -224,31 +241,14 @@ CREATE TABLE test_environment.service (
     margin DECIMAL(5, 2) -- Margin of the service
 );
 
--- Table to store information about products offered
-CREATE TABLE test_environment.product (
-    product_id SERIAL PRIMARY KEY, -- Unique identifier for each product
-    title VARCHAR(100), -- Title of the product
-    description TEXT, -- Description of the product
-    availability BOOLEAN, -- Availability of the product
-    price DECIMAL(10, 2), -- Price of the product
-    cost_per_product DECIMAL(10, 2), -- Cost per product
-    profit DECIMAL(10, 2), -- Profit from the product
-    margin DECIMAL(5, 2) -- Margin of the product
-);
-
--- Table to store information about different locations
-CREATE TABLE test_environment.location (
-    location_id SERIAL PRIMARY KEY, -- Unique identifier for each location
-    location_name VARCHAR(100) -- Name of the location
-);
-
--- Table to store inventory of products at different locations
-CREATE TABLE test_environment.inventory (
-    inventory_id SERIAL PRIMARY KEY, -- Unique identifier for each inventory entry
-    product_id INT REFERENCES product(product_id), -- Foreign key referencing the product in inventory
-    location_id INT REFERENCES location(location_id), -- Foreign key referencing the location of the inventory
-    quantity INT, -- Quantity of the product in inventory
-    CONSTRAINT unique_product_location UNIQUE (product_id, location_id) -- Constraint to ensure uniqueness of product and location combination
+-- Table to store information about customers
+CREATE TABLE test_environment.customer (
+    customer_id SERIAL PRIMARY KEY, -- Unique identifier for each customer
+    first_name VARCHAR(50) NOT NULL, -- First name of the customer
+    last_name VARCHAR(50) NOT NULL, -- Last name of the customer
+    phone_number VARCHAR(20), -- Phone number of the customer
+    note TEXT, -- Additional notes about the customer
+    location VARCHAR(100) -- Location of the customer
 );
 
 -- Table to store information about staff members
@@ -266,7 +266,7 @@ CREATE TABLE test_environment.staff (
 -- Table to store information about transactions made by customers
 CREATE TABLE test_environment.transaction (
     transaction_id SERIAL PRIMARY KEY, -- Unique identifier for each transaction
-    customer_id INT REFERENCES customer(customer_id), -- Foreign key referencing the customer associated with this transaction
+    customer_id INT REFERENCES test_environment.customer(customer_id), -- Foreign key referencing the customer associated with this transaction
     notes TEXT, -- Additional notes about the transaction
     discount DECIMAL(10, 2), -- Discount applied to the transaction
     total DECIMAL(10, 2), -- Total amount of the transaction
@@ -276,16 +276,16 @@ CREATE TABLE test_environment.transaction (
 -- Table to store items purchased in each transaction
 CREATE TABLE test_environment.transaction_item (
     transaction_item_id SERIAL PRIMARY KEY, -- Unique identifier for each transaction item
-    transaction_id INT REFERENCES transaction(transaction_id), -- Foreign key referencing the transaction associated with this item
-    product_id INT REFERENCES product(product_id), -- Foreign key referencing the product purchased
+    transaction_id INT REFERENCES test_environment.transaction(transaction_id), -- Foreign key referencing the transaction associated with this item
+    product_id INT REFERENCES test_environment.product(product_id), -- Foreign key referencing the product purchased
     quantity INT -- Quantity of the product purchased
 );
 
 -- Table to store services added to each transaction
 CREATE TABLE test_environment.transaction_service (
     transaction_service_id SERIAL PRIMARY KEY, -- Unique identifier for each transaction service
-    transaction_id INT REFERENCES transaction(transaction_id), -- Foreign key referencing the transaction associated with this service
-    service_id INT REFERENCES service(service_id), -- Foreign key referencing the service added to the transaction
+    transaction_id INT REFERENCES test_environment.transaction(transaction_id), -- Foreign key referencing the transaction associated with this service
+    service_id INT REFERENCES test_environment.service(service_id), -- Foreign key referencing the service added to the transaction
     quantity INT, -- Quantity of the service added
     total DECIMAL(10, 2) -- Total amount of the service
 );
@@ -293,7 +293,7 @@ CREATE TABLE test_environment.transaction_service (
 -- Table to store custom products added to transactions
 CREATE TABLE test_environment.custom_product (
     custom_product_id SERIAL PRIMARY KEY, -- Unique identifier for each custom product
-    transaction_id INT REFERENCES transaction(transaction_id), -- Foreign key referencing the transaction associated with this custom product
+    transaction_id INT REFERENCES test_environment.transaction(transaction_id), -- Foreign key referencing the transaction associated with this custom product
     custom_name VARCHAR(100), -- Name of the custom product
     price DECIMAL(10, 2), -- Price of the custom product
     quantity INT, -- Quantity of the custom product
