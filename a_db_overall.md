@@ -201,102 +201,102 @@ The admin can only see this. Once they navigate through the staff section, they 
 
 ```postgres
 -- Table to store information about customers
-CREATE TABLE test_environment.Customers (
-    CustomerID SERIAL PRIMARY KEY, -- Unique identifier for each customer
-    FirstName VARCHAR(50) NOT NULL, -- First name of the customer
-    LastName VARCHAR(50) NOT NULL, -- Last name of the customer
-    PhoneNumber VARCHAR(20), -- Phone number of the customer
-    Note TEXT, -- Additional notes about the customer
-    Location VARCHAR(100) -- Location of the customer
+CREATE TABLE test_environment.customer (
+    customer_id SERIAL PRIMARY KEY, -- Unique identifier for each customer
+    first_name VARCHAR(50) NOT NULL, -- First name of the customer
+    last_name VARCHAR(50) NOT NULL, -- Last name of the customer
+    phone_number VARCHAR(20), -- Phone number of the customer
+    note TEXT, -- Additional notes about the customer
+    location VARCHAR(100) -- Location of the customer
 );
 
 -- Table to store information about services offered
-CREATE TABLE test_environment.Services (
-    ServiceID SERIAL PRIMARY KEY, -- Unique identifier for each service
-    Title VARCHAR(100), -- Title of the service
-    Description TEXT, -- Description of the service
-    Category VARCHAR(50), -- Category of the service
-    Type VARCHAR(50), -- Type of the service
-    Availability BOOLEAN, -- Availability of the service
-    Price DECIMAL(10, 2), -- Price of the service
-    CostPerService DECIMAL(10, 2), -- Cost per service
-    Profit DECIMAL(10, 2), -- Profit from the service
-    Margin DECIMAL(5, 2) -- Margin of the service
+CREATE TABLE test_environment.service (
+    service_id SERIAL PRIMARY KEY, -- Unique identifier for each service
+    title VARCHAR(100), -- Title of the service
+    description TEXT, -- Description of the service
+    category VARCHAR(50), -- Category of the service
+    type VARCHAR(50), -- Type of the service
+    availability BOOLEAN, -- Availability of the service
+    price DECIMAL(10, 2), -- Price of the service
+    cost_per_service DECIMAL(10, 2), -- Cost per service
+    profit DECIMAL(10, 2), -- Profit from the service
+    margin DECIMAL(5, 2) -- Margin of the service
 );
 
 -- Table to store information about products offered
-CREATE TABLE test_environment.Products (
-    ProductID SERIAL PRIMARY KEY, -- Unique identifier for each product
-    Title VARCHAR(100), -- Title of the product
-    Description TEXT, -- Description of the product
-    Availability BOOLEAN, -- Availability of the product
-    Price DECIMAL(10, 2), -- Price of the product
-    CostPerProduct DECIMAL(10, 2), -- Cost per product
-    Profit DECIMAL(10, 2), -- Profit from the product
-    Margin DECIMAL(5, 2) -- Margin of the product
+CREATE TABLE test_environment.product (
+    product_id SERIAL PRIMARY KEY, -- Unique identifier for each product
+    title VARCHAR(100), -- Title of the product
+    description TEXT, -- Description of the product
+    availability BOOLEAN, -- Availability of the product
+    price DECIMAL(10, 2), -- Price of the product
+    cost_per_product DECIMAL(10, 2), -- Cost per product
+    profit DECIMAL(10, 2), -- Profit from the product
+    margin DECIMAL(5, 2) -- Margin of the product
 );
 
 -- Table to store information about different locations
-CREATE TABLE test_environment.Locations (
-    LocationID SERIAL PRIMARY KEY, -- Unique identifier for each location
-    LocationName VARCHAR(100) -- Name of the location
+CREATE TABLE test_environment.location (
+    location_id SERIAL PRIMARY KEY, -- Unique identifier for each location
+    location_name VARCHAR(100) -- Name of the location
 );
 
 -- Table to store inventory of products at different locations
-CREATE TABLE test_environment.Inventory (
-    InventoryID SERIAL PRIMARY KEY, -- Unique identifier for each inventory entry
-    ProductID INT REFERENCES Products(ProductID), -- Foreign key referencing the product in inventory
-    LocationID INT REFERENCES Locations(LocationID), -- Foreign key referencing the location of the inventory
-    Quantity INT, -- Quantity of the product in inventory
-    CONSTRAINT unique_product_location UNIQUE (ProductID, LocationID) -- Constraint to ensure uniqueness of product and location combination
+CREATE TABLE test_environment.inventory (
+    inventory_id SERIAL PRIMARY KEY, -- Unique identifier for each inventory entry
+    product_id INT REFERENCES product(product_id), -- Foreign key referencing the product in inventory
+    location_id INT REFERENCES location(location_id), -- Foreign key referencing the location of the inventory
+    quantity INT, -- Quantity of the product in inventory
+    CONSTRAINT unique_product_location UNIQUE (product_id, location_id) -- Constraint to ensure uniqueness of product and location combination
 );
 
 -- Table to store information about staff members
-CREATE TABLE test_environment.Staff (
-    StaffID SERIAL PRIMARY KEY, -- Unique identifier for each staff member
-    FirstName VARCHAR(50) NOT NULL, -- First name of the staff member
-    LastName VARCHAR(50) NOT NULL, -- Last name of the staff member
-    Username VARCHAR(50) UNIQUE, -- Unique username for the staff member
-    Email VARCHAR(100) UNIQUE, -- Unique email address of the staff member
-    Phone VARCHAR(20), -- Phone number of the staff member
-    StaffPermissions BOOLEAN, -- Permissions granted to the staff member
-    AdminPermissions BOOLEAN -- Admin permissions granted to the staff member
+CREATE TABLE test_environment.staff (
+    staff_id SERIAL PRIMARY KEY, -- Unique identifier for each staff member
+    first_name VARCHAR(50) NOT NULL, -- First name of the staff member
+    last_name VARCHAR(50) NOT NULL, -- Last name of the staff member
+    username VARCHAR(50) UNIQUE, -- Unique username for the staff member
+    email VARCHAR(100) UNIQUE, -- Unique email address of the staff member
+    phone VARCHAR(20), -- Phone number of the staff member
+    staff_permissions BOOLEAN, -- Permissions granted to the staff member
+    admin_permissions BOOLEAN -- Admin permissions granted to the staff member
 );
 
 -- Table to store information about transactions made by customers
-CREATE TABLE test_environment.Transactions (
-    TransactionID SERIAL PRIMARY KEY, -- Unique identifier for each transaction
-    CustomerID INT REFERENCES Customers(CustomerID), -- Foreign key referencing the customer associated with this transaction
-    Notes TEXT, -- Additional notes about the transaction
-    Discount DECIMAL(10, 2), -- Discount applied to the transaction
-    Total DECIMAL(10, 2), -- Total amount of the transaction
-    Status VARCHAR(10) CHECK (Status IN ('Paid', 'Due')) -- Status of the transaction (Paid or Due)
+CREATE TABLE test_environment.transaction (
+    transaction_id SERIAL PRIMARY KEY, -- Unique identifier for each transaction
+    customer_id INT REFERENCES customer(customer_id), -- Foreign key referencing the customer associated with this transaction
+    notes TEXT, -- Additional notes about the transaction
+    discount DECIMAL(10, 2), -- Discount applied to the transaction
+    total DECIMAL(10, 2), -- Total amount of the transaction
+    status VARCHAR(10) CHECK (status IN ('Paid', 'Due')) -- Status of the transaction (Paid or Due)
 );
 
 -- Table to store items purchased in each transaction
-CREATE TABLE test_environment.TransactionItems (
-    TransactionItemID SERIAL PRIMARY KEY, -- Unique identifier for each transaction item
-    TransactionID INT REFERENCES Transactions(TransactionID), -- Foreign key referencing the transaction associated with this item
-    ProductID INT REFERENCES Products(ProductID), -- Foreign key referencing the product purchased
-    Quantity INT -- Quantity of the product purchased
+CREATE TABLE test_environment.transaction_item (
+    transaction_item_id SERIAL PRIMARY KEY, -- Unique identifier for each transaction item
+    transaction_id INT REFERENCES transaction(transaction_id), -- Foreign key referencing the transaction associated with this item
+    product_id INT REFERENCES product(product_id), -- Foreign key referencing the product purchased
+    quantity INT -- Quantity of the product purchased
 );
 
 -- Table to store services added to each transaction
-CREATE TABLE test_environment.TransactionServices (
-    TransactionServiceID SERIAL PRIMARY KEY, -- Unique identifier for each transaction service
-    TransactionID INT REFERENCES Transactions(TransactionID), -- Foreign key referencing the transaction associated with this service
-    ServiceID INT REFERENCES Services(ServiceID), -- Foreign key referencing the service added to the transaction
-    Quantity INT, -- Quantity of the service added
-    Total DECIMAL(10, 2) -- Total amount of the service
+CREATE TABLE test_environment.transaction_service (
+    transaction_service_id SERIAL PRIMARY KEY, -- Unique identifier for each transaction service
+    transaction_id INT REFERENCES transaction(transaction_id), -- Foreign key referencing the transaction associated with this service
+    service_id INT REFERENCES service(service_id), -- Foreign key referencing the service added to the transaction
+    quantity INT, -- Quantity of the service added
+    total DECIMAL(10, 2) -- Total amount of the service
 );
 
 -- Table to store custom products added to transactions
-CREATE TABLE test_environment.CustomProducts (
-    CustomProductID SERIAL PRIMARY KEY, -- Unique identifier for each custom product
-    TransactionID INT REFERENCES Transactions(TransactionID), -- Foreign key referencing the transaction associated with this custom product
-    CustomName VARCHAR(100), -- Name of the custom product
-    Price DECIMAL(10, 2), -- Price of the custom product
-    Quantity INT, -- Quantity of the custom product
-    Total DECIMAL(10, 2) -- Total amount of the custom product
+CREATE TABLE test_environment.custom_product (
+    custom_product_id SERIAL PRIMARY KEY, -- Unique identifier for each custom product
+    transaction_id INT REFERENCES transaction(transaction_id), -- Foreign key referencing the transaction associated with this custom product
+    custom_name VARCHAR(100), -- Name of the custom product
+    price DECIMAL(10, 2), -- Price of the custom product
+    quantity INT, -- Quantity of the custom product
+    total DECIMAL(10, 2) -- Total amount of the custom product
 );
 ```
