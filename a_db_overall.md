@@ -200,93 +200,103 @@ The admin can only see this. Once they navigate through the staff section, they 
 # PostgreSQL Schema
 
 ```postgres
-CREATE TABLE Customers (
-    CustomerID SERIAL PRIMARY KEY,
-    FirstName VARCHAR(50) NOT NULL,
-    LastName VARCHAR(50) NOT NULL,
-    PhoneNumber VARCHAR(20),
-    Note TEXT,
-    Location VARCHAR(100)
+-- Table to store information about customers
+CREATE TABLE test_environment.Customers (
+    CustomerID SERIAL PRIMARY KEY, -- Unique identifier for each customer
+    FirstName VARCHAR(50) NOT NULL, -- First name of the customer
+    LastName VARCHAR(50) NOT NULL, -- Last name of the customer
+    PhoneNumber VARCHAR(20), -- Phone number of the customer
+    Note TEXT, -- Additional notes about the customer
+    Location VARCHAR(100) -- Location of the customer
 );
 
-CREATE TABLE Transactions (
-    TransactionID SERIAL PRIMARY KEY,
-    CustomerID INT REFERENCES Customers(CustomerID),
-    Notes TEXT,
-    Discount DECIMAL(10, 2),
-    Total DECIMAL(10, 2),
-    Status VARCHAR(10) CHECK (Status IN ('Paid', 'Due'))
+-- Table to store information about services offered
+CREATE TABLE test_environment.Services (
+    ServiceID SERIAL PRIMARY KEY, -- Unique identifier for each service
+    Title VARCHAR(100), -- Title of the service
+    Description TEXT, -- Description of the service
+    Category VARCHAR(50), -- Category of the service
+    Type VARCHAR(50), -- Type of the service
+    Availability BOOLEAN, -- Availability of the service
+    Price DECIMAL(10, 2), -- Price of the service
+    CostPerService DECIMAL(10, 2), -- Cost per service
+    Profit DECIMAL(10, 2), -- Profit from the service
+    Margin DECIMAL(5, 2) -- Margin of the service
 );
 
-CREATE TABLE TransactionItems (
-    TransactionItemID SERIAL PRIMARY KEY,
-    TransactionID INT REFERENCES Transactions(TransactionID),
-    ProductID INT REFERENCES Products(ProductID),
-    Quantity INT
+-- Table to store information about products offered
+CREATE TABLE test_environment.Products (
+    ProductID SERIAL PRIMARY KEY, -- Unique identifier for each product
+    Title VARCHAR(100), -- Title of the product
+    Description TEXT, -- Description of the product
+    Availability BOOLEAN, -- Availability of the product
+    Price DECIMAL(10, 2), -- Price of the product
+    CostPerProduct DECIMAL(10, 2), -- Cost per product
+    Profit DECIMAL(10, 2), -- Profit from the product
+    Margin DECIMAL(5, 2) -- Margin of the product
 );
 
-CREATE TABLE TransactionServices (
-    TransactionServiceID SERIAL PRIMARY KEY,
-    TransactionID INT REFERENCES Transactions(TransactionID),
-    ServiceID INT REFERENCES Services(ServiceID),
-    Quantity INT,
-    Total DECIMAL(10, 2)
+-- Table to store information about different locations
+CREATE TABLE test_environment.Locations (
+    LocationID SERIAL PRIMARY KEY, -- Unique identifier for each location
+    LocationName VARCHAR(100) -- Name of the location
 );
 
-CREATE TABLE CustomProducts (
-    CustomProductID SERIAL PRIMARY KEY,
-    TransactionID INT REFERENCES Transactions(TransactionID),
-    CustomName VARCHAR(100),
-    Price DECIMAL(10, 2),
-    Quantity INT,
-    Total DECIMAL(10, 2)
+-- Table to store inventory of products at different locations
+CREATE TABLE test_environment.Inventory (
+    InventoryID SERIAL PRIMARY KEY, -- Unique identifier for each inventory entry
+    ProductID INT REFERENCES Products(ProductID), -- Foreign key referencing the product in inventory
+    LocationID INT REFERENCES Locations(LocationID), -- Foreign key referencing the location of the inventory
+    Quantity INT, -- Quantity of the product in inventory
+    CONSTRAINT unique_product_location UNIQUE (ProductID, LocationID) -- Constraint to ensure uniqueness of product and location combination
 );
 
-CREATE TABLE Services (
-    ServiceID SERIAL PRIMARY KEY,
-    Title VARCHAR(100),
-    Description TEXT,
-    Category VARCHAR(50),
-    Type VARCHAR(50),
-    Availability BOOLEAN,
-    Price DECIMAL(10, 2),
-    CostPerService DECIMAL(10, 2),
-    Profit DECIMAL(10, 2),
-    Margin DECIMAL(5, 2)
+-- Table to store information about staff members
+CREATE TABLE test_environment.Staff (
+    StaffID SERIAL PRIMARY KEY, -- Unique identifier for each staff member
+    FirstName VARCHAR(50) NOT NULL, -- First name of the staff member
+    LastName VARCHAR(50) NOT NULL, -- Last name of the staff member
+    Username VARCHAR(50) UNIQUE, -- Unique username for the staff member
+    Email VARCHAR(100) UNIQUE, -- Unique email address of the staff member
+    Phone VARCHAR(20), -- Phone number of the staff member
+    StaffPermissions BOOLEAN, -- Permissions granted to the staff member
+    AdminPermissions BOOLEAN -- Admin permissions granted to the staff member
 );
 
-CREATE TABLE Products (
-    ProductID SERIAL PRIMARY KEY,
-    Title VARCHAR(100),
-    Description TEXT,
-    Availability BOOLEAN,
-    Price DECIMAL(10, 2),
-    CostPerProduct DECIMAL(10, 2),
-    Profit DECIMAL(10, 2),
-    Margin DECIMAL(5, 2)
+-- Table to store information about transactions made by customers
+CREATE TABLE test_environment.Transactions (
+    TransactionID SERIAL PRIMARY KEY, -- Unique identifier for each transaction
+    CustomerID INT REFERENCES Customers(CustomerID), -- Foreign key referencing the customer associated with this transaction
+    Notes TEXT, -- Additional notes about the transaction
+    Discount DECIMAL(10, 2), -- Discount applied to the transaction
+    Total DECIMAL(10, 2), -- Total amount of the transaction
+    Status VARCHAR(10) CHECK (Status IN ('Paid', 'Due')) -- Status of the transaction (Paid or Due)
 );
 
-CREATE TABLE Locations (
-    LocationID SERIAL PRIMARY KEY,
-    LocationName VARCHAR(100)
+-- Table to store items purchased in each transaction
+CREATE TABLE test_environment.TransactionItems (
+    TransactionItemID SERIAL PRIMARY KEY, -- Unique identifier for each transaction item
+    TransactionID INT REFERENCES Transactions(TransactionID), -- Foreign key referencing the transaction associated with this item
+    ProductID INT REFERENCES Products(ProductID), -- Foreign key referencing the product purchased
+    Quantity INT -- Quantity of the product purchased
 );
 
-CREATE TABLE Inventory (
-    InventoryID SERIAL PRIMARY KEY,
-    ProductID INT REFERENCES Products(ProductID),
-    LocationID INT REFERENCES Locations(LocationID),
-    Quantity INT,
-    CONSTRAINT unique_product_location UNIQUE (ProductID, LocationID)
+-- Table to store services added to each transaction
+CREATE TABLE test_environment.TransactionServices (
+    TransactionServiceID SERIAL PRIMARY KEY, -- Unique identifier for each transaction service
+    TransactionID INT REFERENCES Transactions(TransactionID), -- Foreign key referencing the transaction associated with this service
+    ServiceID INT REFERENCES Services(ServiceID), -- Foreign key referencing the service added to the transaction
+    Quantity INT, -- Quantity of the service added
+    Total DECIMAL(10, 2) -- Total amount of the service
 );
 
-CREATE TABLE Staff (
-    StaffID SERIAL PRIMARY KEY,
-    FirstName VARCHAR(50) NOT NULL,
-    LastName VARCHAR(50) NOT NULL,
-    Username VARCHAR(50) UNIQUE,
-    Email VARCHAR(100) UNIQUE,
-    Phone VARCHAR(20),
-    StaffPermissions BOOLEAN,
-    AdminPermissions BOOLEAN
+-- Table to store custom products added to transactions
+CREATE TABLE test_environment.CustomProducts (
+    CustomProductID SERIAL PRIMARY KEY, -- Unique identifier for each custom product
+    TransactionID INT REFERENCES Transactions(TransactionID), -- Foreign key referencing the transaction associated with this custom product
+    CustomName VARCHAR(100), -- Name of the custom product
+    Price DECIMAL(10, 2), -- Price of the custom product
+    Quantity INT, -- Quantity of the custom product
+    Total DECIMAL(10, 2) -- Total amount of the custom product
 );
 ```
