@@ -174,7 +174,7 @@ location ||--o{ inventory : ""
 staff ||--o{ transaction : ""
 ```
 ## PostgreSQL Schema
-```postgres
+```sql
 -- Table to store information about customers
 CREATE TABLE Customers (
     CustomerID SERIAL PRIMARY KEY, -- Unique identifier for each customer
